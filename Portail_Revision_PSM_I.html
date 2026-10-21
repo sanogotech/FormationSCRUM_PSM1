@@ -218,6 +218,30 @@ ul.clean li::marker{color:var(--accent)}
   .mrow{grid-template-columns:110px 1fr 64px}
   .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
+/* nouveaux onglets */
+ol.seq{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+ol.seq li{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+ol.seq li .pos{font:600 13px var(--f-mono);color:var(--muted);text-align:center}
+ol.seq li .st{min-width:0}
+ol.seq li .mv{display:flex;gap:4px}
+ol.seq li.right{border-color:var(--ok);background:var(--ok-soft)}
+ol.seq li.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.assoc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.assoc > *{min-width:0}
+.acol{display:flex;flex-direction:column;gap:8px}
+.assoc .opt{min-height:52px;align-items:center}
+.heat-h,.heat{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;max-width:340px}
+.heat-h{margin-top:12px;font:600 11px var(--f-mono);color:var(--muted);text-align:center}
+.heat{margin-top:4px}
+.hc{aspect-ratio:1;border-radius:4px;background:var(--sunk);max-width:100%}
+.hc.l1{background:color-mix(in srgb,var(--accent) 30%,var(--sunk))}
+.hc.l2{background:color-mix(in srgb,var(--accent) 60%,var(--sunk))}
+.hc.l3{background:var(--accent)}
+.hc.fut{background:transparent;border:1px dashed var(--line)}
+.hc.sw{width:14px;height:14px;display:inline-block}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+textarea.code{width:100%;min-height:90px;margin-top:10px;font:13px/1.4 var(--f-mono);padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--sunk);color:var(--ink);word-break:break-all;resize:vertical}
+@media (max-width:760px){.assoc .opt{font-size:14.5px;padding:10px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -230,6 +254,11 @@ ul.clean li::marker{color:var(--accent)}
     <button data-v="simu">Simulateur 80 q.<span class="new">N°1</span></button>
     <button data-v="carnet">Carnet d'erreurs<span class="new">N°2</span></button>
     <button data-v="eclair">Guide ou mythe ?<span class="new">N°5</span></button>
+    <button data-v="ordre">Le bon ordre<span class="new">+</span></button>
+    <button data-v="formules">Atelier formules<span class="new">+</span></button>
+    <button data-v="assoc">Associations<span class="new">+</span></button>
+    <button data-v="cas">Études de cas<span class="new">+</span></button>
+    <button data-v="progres">Progression<span class="new">+</span></button>
     <button data-v="fiches">Fiches REX</button>
     <button data-v="cheatsheet">Cheat sheet</button>
     <button data-v="glossaire">Glossaire</button>
@@ -1484,7 +1513,7 @@ const isRight=(q,sel)=>Array.isArray(sel)&&sel.length===q.opts.filter(o=>o.ok).l
 const typeLabel=(q,t)=>q.tf?t.tfl:q.k>1?t.multi(q.k):t.single;
 
 /* ---------- statistiques de maîtrise (innovation 4) ---------- */
-function record(q,ok){const s=store.get('psm:stat',{});const k=String(q.a);s[k]=s[k]||{n:0,c:0};s[k].n++;if(ok)s[k].c++;store.set('psm:stat',s)}
+function record(q,ok){const s=store.get('psm:stat',{});const k=String(q.a);s[k]=s[k]||{n:0,c:0};s[k].n++;if(ok)s[k].c++;store.set('psm:stat',s);bumpDay(1)}
 function leitner(q,ok,fromCarnet){const b=store.get('psm:box',{});if(!ok){b[q.id]=1}else if(b[q.id]!=null&&fromCarnet){b[q.id]++;if(b[q.id]>3){b[q.id]=4}}store.set('psm:box',b)}
 function predicted(){const s=store.get('psm:stat',{});let w=0,acc=0,cov=0;AREAS.forEach(a=>{const x=s[a];if(x&&x.n>=3){w+=META[a].n;acc+=META[a].n*x.c/x.n;cov++}});return {pct:w?acc/w:null,cov}}
 
@@ -1528,6 +1557,14 @@ function viewHome(){
   <button data-go="quiz"><span class="n">N°3</span><b>Indice de certitude</b><span>Déclarez Sûr, Hésitant ou Au hasard : le bilan isole les erreurs commises avec assurance.</span></button>
   <button data-go="maitrise"><span class="n">N°4</span><b>Score prédit</b><span>Maîtrise par thème pondérée par la répartition des 80 questions, comparée au seuil 68/80.</span></button>
   <button data-go="eclair"><span class="n">N°5</span><b>Guide ou mythe ?</b><span>Vrai/Faux éclair en 8 secondes pour chasser les idées reçues sur Scrum.</span></button>
+ </div>
+ <h2 style="margin-bottom:12px">5 nouveaux onglets d'entraînement</h2>
+ <div class="innov">
+  <button data-go="ordre"><span class="n">+ ORDRE</span><b>Le bon ordre</b><span>Remettre dans l'ordre les étapes de 12 processus Scrum : Sprint, Planning, annulation, Review, Retrospective, obstacles…</span></button>
+  <button data-go="formules"><span class="n">+ CALCUL</span><b>Atelier formules</b><span>Exercices chiffrés générés à l'infini : score et seuil, gestion du temps, prévision empirique, loi de Little, capacité.</span></button>
+  <button data-go="assoc"><span class="n">+ VOCABULAIRE</span><b>Associations éclair</b><span>Relier 6 termes anglais à leur traduction au chrono, avec un record à battre.</span></button>
+  <button data-go="cas"><span class="n">+ TERRAIN</span><b>Études de cas</b><span>8 scénarios en 3 décisions, situés en Afrique de l'Ouest.</span></button>
+  <button data-go="progres"><span class="n">+ SUIVI</span><b>Progression et objectifs</b><span>Objectif quotidien, jours de suite, activité sur 5 semaines, historique et code de sauvegarde.</span></button>
  </div>
  <div class="twocol">
   <section class="panel" id="maitrise"><div class="row" style="justify-content:space-between"><h3>Maîtrise et score prédit <span class="mono" style="font-size:11px;color:var(--accent)">N°4</span></h3>
@@ -1659,6 +1696,7 @@ function renderResult(){
  const s=session,t=T[s.lang];
  const res=s.qs.map((q,i)=>isRight(q,s.sel[i]));const good=res.filter(Boolean).length,pct=Math.round(good/s.qs.length*100);
  const byA={};s.qs.forEach((q,i)=>{byA[q.a]=byA[q.a]||{g:0,n:0};byA[q.a].n++;if(res[i])byA[q.a].g++});
+ if(!s.logged){s.logged=true;logSession((s.carnet?'Carnet d\'erreurs':s.lang==='fr'?'Quiz FR':'Quiz EN'),good,s.qs.length)}
  if(!s.saved&&!s.carnet){s.saved=true;Object.keys(byA).forEach(a=>{if(byA[a].n>=4){const p=Math.round(byA[a].g/byA[a].n*100),k=`psm:best:${s.lang}:${a}`;const b=store.get(k,null);if(b==null||p>b)store.set(k,p)}})}
  const cal={sr:0,sw:0,ur:0,uw:0};s.qs.forEach((q,i)=>{const sure=s.conf[i]===0;if(sure&&res[i])cal.sr++;else if(sure)cal.sw++;else if(res[i])cal.ur++;else cal.uw++});
  const fr=s.lang==='fr';
@@ -1737,7 +1775,7 @@ function finishSim(){
  s.res=s.qs.map((q,i)=>isRight(q,s.sel[i]));
  s.qs.forEach((q,i)=>{record(q,s.res[i]);leitner(q,s.res[i],false)});
  const sc=s.res.filter(Boolean).length,h=store.get('psm:simhist',[]);
- h.push({d:new Date().toLocaleDateString('fr-FR'),l:s.lang,s:sc,t:s.used});store.set('psm:simhist',h.slice(-30));
+ h.push({d:new Date().toLocaleDateString('fr-FR'),l:s.lang,s:sc,t:s.used});store.set('psm:simhist',h.slice(-30));logSession('Simulateur '+s.lang.toUpperCase(),sc,80);
  if(current==='simu')renderSimResult();
 }
 function renderSimResult(){
@@ -1806,7 +1844,7 @@ function viewFlash(){
 }
 function startItem(){flash.ans=null;flash.t0=Date.now();clearInterval(flash.tid);renderFlash();flash.tid=setInterval(()=>{const p=1-(Date.now()-flash.t0)/8000;const bar=$('#tbar');if(bar)bar.style.width=Math.max(0,p*100)+'%';if(p<=0&&!flash.ans)pickFlash(null)},100)}
 function pickFlash(v){if(!flash||flash.ans)return;clearInterval(flash.tid);const it=flash.items[flash.i];const ok=v===it[1];flash.ans={v,ok};if(ok)flash.score++;flash.log.push({it,ok,v});renderFlash()}
-function nextFlash(){if(!flash.ans)return;if(flash.i<flash.items.length-1){flash.i++;startItem()}else{flash.done=true;const b=store.get('psm:flashbest',null);if(b==null||flash.score>b)store.set('psm:flashbest',flash.score);renderFlashEnd()}}
+function nextFlash(){if(!flash.ans)return;if(flash.i<flash.items.length-1){flash.i++;startItem()}else{flash.done=true;const b=store.get('psm:flashbest',null);if(b==null||flash.score>b)store.set('psm:flashbest',flash.score);logSession('Guide ou mythe ?',flash.score,20);renderFlashEnd()}}
 function renderFlash(){
  if(flash.done)return renderFlashEnd();
  const it=flash.items[flash.i],a=flash.ans;
@@ -1880,6 +1918,222 @@ function viewGloss(){
  $('#ga').onchange=e=>{ga=+e.target.value;draw()};
  draw();
 }
+
+/* ================= EXTENSION : 5 nouveaux onglets ================= */
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+function bumpDay(n){const d=store.get('psm:days',{}),k=today();d[k]=(d[k]||0)+n;store.set('psm:days',d)}
+function logSession(mod,score,total){const h=store.get('psm:sessions',[]);const d=new Date();h.push({d:d.toLocaleDateString('fr-FR'),h:d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),m:mod,s:score,t:total});store.set('psm:sessions',h.slice(-200))}
+
+/* ---------- Le bon ordre ---------- */
+const ORDRE=[
+["Les événements dans un Sprint",2,["Sprint Planning","Daily Scrums","Sprint Review","Sprint Retrospective"],"Le Sprint contient tous les événements. Il s'ouvre par le Sprint Planning, se poursuit par des Daily Scrums et se conclut par la Review puis la Retrospective."],
+["Les trois sujets du Sprint Planning",2,["Pourquoi ce Sprint a-t-il de la valeur ? (Sprint Goal)","Que peut-on terminer dans ce Sprint ? (éléments sélectionnés)","Comment le travail choisi sera-t-il réalisé ? (plan)"],"Sujet 1 : pourquoi ; sujet 2 : quoi ; sujet 3 : comment. Le Sprint Goal est finalisé avant la fin du Planning."],
+["Le cycle empirique",8,["Transparence : rendre le travail et le processus visibles","Inspection : examiner artefacts et progression","Adaptation : ajuster dès que possible"],"L'inspection sans transparence est trompeuse ; l'adaptation suit l'inspection."],
+["Le parcours d'un élément du Product Backlog",12,["Ajouté au Product Backlog","Raffiné : décomposé, décrit, dimensionné","Ordonné par le Product Owner","Sélectionné au Sprint Planning","Décomposé par les Developers dans le Sprint Backlog","Répond à la Definition of Done : un Increment naît","Présenté aux parties prenantes à la Sprint Review"],"Un élément devient Increment dès qu'il répond à la DoD ; il peut être livré avant la Review."],
+["L'annulation d'un Sprint",2,["Le Sprint Goal devient obsolète","Le Product Owner décide d'annuler le Sprint","Les éléments Done sont examinés et peuvent être livrés","Les éléments non terminés retournent au Product Backlog","Un nouveau Sprint Planning démarre"],"Seul le PO peut annuler un Sprint, et seulement si le Sprint Goal devient obsolète."],
+["Le déroulé d'une Sprint Review",2,["La Scrum Team présente les résultats de son travail aux parties prenantes clés","La progression vers le Product Goal est discutée","Les participants collaborent sur ce qu'il faut faire ensuite","Le Product Backlog est ajusté pour saisir de nouvelles opportunités"],"La Review est une session de travail, pas une simple présentation."],
+["Le déroulé d'une Sprint Retrospective",2,["Inspecter comment s'est passé le dernier Sprint (individus, interactions, processus, outils, DoD)","Identifier ce qui a bien fonctionné et les problèmes rencontrés","Choisir les améliorations les plus utiles","Ajouter les améliorations au Sprint Backlog du Sprint suivant si besoin"],"Les améliorations les plus impactantes sont traitées dès que possible."],
+["La construction du Sprint Backlog",9,["Le PO propose comment le produit pourrait gagner en valeur","La Scrum Team définit le Sprint Goal","Les Developers sélectionnent les éléments du Product Backlog","Les Developers planifient le travail, souvent en unités d'un jour ou moins"],"Sprint Backlog = Sprint Goal (pourquoi) + éléments sélectionnés (quoi) + plan (comment)."],
+["Le traitement d'un obstacle",7,["Un Developer rencontre un obstacle","L'obstacle est rendu visible, par exemple au Daily Scrum","L'équipe tente de le résoudre elle-même","Si l'obstacle dépasse l'équipe, le Scrum Master en provoque la suppression","L'équipe vérifie que l'obstacle est levé et reprend sa progression"],"Le SM provoque la suppression des obstacles ; il ne retire pas tout lui-même."],
+["Le passage à plusieurs équipes",1,["La Scrum Team dépasse une taille efficace","Elle se réorganise en plusieurs Scrum Teams cohérentes","Les équipes partagent le même Product Goal, Product Backlog et Product Owner","Elles définissent ensemble une Definition of Done commune","Elles produisent un Increment intégré"],"Un produit, un Product Owner, un Product Backlog, une DoD commune."],
+["La demande d'une partie prenante",6,["Une partie prenante exprime un besoin","Elle en discute avec le Product Owner","Le PO décide de l'ajouter et de son ordre dans le Product Backlog","L'élément est raffiné avec les Developers","Il peut être sélectionné lors d'un prochain Sprint Planning"],"Pour changer le Product Backlog, il faut convaincre le Product Owner."],
+["Des objectifs du plus long au plus court terme",9,["Product Goal : objectif à long terme dans le Product Backlog","Sprint Goal : objectif unique du Sprint","Plan d'action du jour adapté au Daily Scrum"],"Chaque niveau sert le précédent : le Sprint rapproche du Product Goal, le Daily rapproche du Sprint Goal."]
+];
+let ordre=null;
+function viewOrdre(){
+ if(ordre&&!ordre.done)return renderOrdre();
+ app.innerHTML=`<div class="eyebrow">Nouvel onglet · séquences Scrum</div><h1>Le bon ordre</h1>
+ <p class="lede">Remettez dans l'ordre chronologique les étapes de ${ORDRE.length} processus Scrum : événements du Sprint, Sprint Planning, parcours d'un élément du backlog, annulation d'un Sprint, Review, Retrospective, obstacles, mise à l'échelle… Déplacez les étapes avec les flèches, puis vérifiez.</p>
+ ${ordre&&ordre.done?`<div class="panel" style="margin-top:20px"><h3>Dernière série : ${ordre.score}/${ordre.items.length} processus parfaitement ordonnés</h3></div>`:''}
+ <div class="panel" style="margin-top:20px"><div class="row"><button class="btn primary" id="ogo">Lancer les ${ORDRE.length} processus</button><button class="btn" id="ogo6">Série courte de 6</button></div>
+ <p style="font-size:13px;color:var(--muted);margin:10px 0 0">Record : ${store.get('psm:ordrebest',null)==null?'—':store.get('psm:ordrebest')+' processus parfaits'}</p></div>`;
+ const st=n=>{ordre={items:shuffle(ORDRE).slice(0,n),i:0,score:0,done:false};newOrdreItem()};
+ $('#ogo').onclick=()=>st(ORDRE.length);$('#ogo6').onclick=()=>st(6);
+}
+function newOrdreItem(){const it=ordre.items[ordre.i];let p=shuffle(it[2].map((_,k)=>k));while(p.every((v,k)=>v===k)&&p.length>1)p=shuffle(p);ordre.perm=p;ordre.checked=false;renderOrdre()}
+function renderOrdre(){
+ const it=ordre.items[ordre.i],p=ordre.perm,ch=ordre.checked;
+ const ok=ch&&p.every((v,k)=>v===k);
+ app.innerHTML=`<div class="qhead"><span>Le bon ordre · thème ${it[1]} · ${esc(META[it[1]].fr)}</span><span>${ordre.i+1}/${ordre.items.length} · ${ordre.score} parfait(s)</span></div>
+ <div class="progress"><i style="width:${(ordre.i+(ch?1:0))/ordre.items.length*100}%"></i></div>
+ <div class="panel"><p class="qtext">${esc(it[0])}</p>
+ <ol class="seq">${p.map((v,k)=>`<li class="${ch?(v===k?'right':'wrong'):''}"><span class="pos">${k+1}</span><span class="st">${esc(it[2][v])}</span>${ch?(v===k?'':`<span class="mono" style="font-size:12px;color:var(--bad)">→ ${v+1}</span>`):`<span class="mv"><button class="btn sm" data-u="${k}" ${k===0?'disabled':''} aria-label="Monter">↑</button><button class="btn sm" data-d="${k}" ${k===p.length-1?'disabled':''} aria-label="Descendre">↓</button></span>`}</li>`).join('')}</ol>
+ ${ch?`<div class="feedback"><div class="verdict ${ok?'ok':'ko'}">${ok?'Ordre parfait.':`${p.filter((v,k)=>v===k).length}/${p.length} étapes bien placées. Le nombre à droite indique la bonne position.`}</div>
+ ${ok?'':`<div><b>Ordre correct :</b><ol style="margin:4px 0 0;padding-left:20px">${it[2].map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div>`}<div class="rex"><b>À retenir</b>${esc(it[3])}</div></div>`:''}
+ <div class="qnav"><button class="btn" id="oquit">Quitter</button>${ch?`<button class="btn primary" id="onext">${ordre.i<ordre.items.length-1?'Processus suivant':'Voir le score'}</button>`:`<button class="btn primary" id="ock">Vérifier l'ordre</button>`}</div></div>`;
+ app.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{const k=+b.dataset.u;[p[k-1],p[k]]=[p[k],p[k-1]];renderOrdre()});
+ app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const k=+b.dataset.d;[p[k+1],p[k]]=[p[k],p[k+1]];renderOrdre()});
+ const c=$('#ock');if(c)c.onclick=()=>{ordre.checked=true;if(p.every((v,k)=>v===k))ordre.score++;bumpDay(1);renderOrdre()};
+ const n=$('#onext');if(n)n.onclick=()=>{if(ordre.i<ordre.items.length-1){ordre.i++;newOrdreItem()}else{ordre.done=true;const b=store.get('psm:ordrebest',null);if(b==null||ordre.score>b)store.set('psm:ordrebest',ordre.score);logSession('Le bon ordre',ordre.score,ordre.items.length);viewOrdre()}};
+ $('#oquit').onclick=()=>{ordre=null;viewOrdre()};
+}
+
+/* ---------- Atelier formules ---------- */
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const nf=(x,d)=>Number(x).toLocaleString('fr-FR',{maximumFractionDigits:d==null?2:d});
+const FORM={
+ score:{n:"Score PSM I",g(){const c=R(58,79),p=c/80*100;return {q:`Vous obtenez <b>${c}</b> bonnes réponses sur 80 à un examen blanc. Quel est votre score en pourcentage ? (une décimale)`,a:Math.round(p*10)/10,tol:.05,u:'%',s:`Score = bonnes réponses ÷ 80 × 100 = ${c} ÷ 80 × 100 = <b>${nf(p,1)} %</b>.<br>Seuil : 85 % = 68/80. ${c>=68?`Réussi, avec ${c-68} réponse(s) de marge.`:`Échec : il manque ${68-c} bonne(s) réponse(s).`}`}}},
+ seuil:{n:"Bonnes réponses minimales",g(){const q=[20,30,40,50,60,80][R(0,5)],m=Math.ceil(q*.85-1e-9);return {q:`Un examen blanc compte <b>${q}</b> questions avec le seuil PSM I de 85 %. Combien de bonnes réponses faut-il au minimum ?`,a:m,tol:0,u:'bonnes réponses',s:`Minimum = arrondi supérieur de ${q} × 0,85 = arrondi sup. de ${nf(q*.85)} = <b>${m}</b>.<br>Erreurs autorisées : ${q} − ${m} = ${q-m}. Sur l'examen réel : 68/80, soit 12 erreurs au maximum.`}}},
+ rythme:{n:"Gestion du temps",g(){const m=R(15,50),a=Math.min(79,Math.round(m*80/60)+R(-12,6));const v=(60-m)*60/(80-a);return {q:`Après <b>${m} minutes</b>, vous avez répondu à <b>${a}</b> questions sur 80. Combien de secondes vous reste-t-il en moyenne par question restante ? (arrondi à l'unité)`,a:Math.round(v),tol:1,u:'s',s:`Temps restant = (60 − ${m}) × 60 = ${(60-m)*60} s. Questions restantes = 80 − ${a} = ${80-a}.<br>Temps par question = ${(60-m)*60} ÷ ${80-a} = <b>${nf(v,1)} s</b>. Rythme cible : 45 s. ${v>=45?'Vous êtes dans les temps.':'Accélérez et marquez les questions difficiles pour y revenir.'}`}}},
+ canaux:{n:"Canaux de communication",g(){const n=R(3,16),c=n*(n-1)/2;return {q:`Une équipe compte <b>${n}</b> personnes. Combien de canaux de communication possibles existe-t-il entre elles ? (formule n(n−1)/2)`,a:c,tol:0,u:'canaux',s:`Canaux = n(n−1)/2 = ${n} × ${n-1} ÷ 2 = <b>${c}</b>.<br>À 10 personnes : 45 canaux ; à 15 : 105. C'est l'une des raisons pour lesquelles le Scrum Guide recommande une Scrum Team de 10 personnes ou moins.`}}},
+ prevision:{n:"Prévision empirique",g(){const k=R(3,5),th=Array.from({length:k},()=>R(6,14)),avg=th.reduce((x,y)=>x+y,0)/k,rest=R(30,90),sp=Math.ceil(rest/avg),mx=Math.max(...th),mn=Math.min(...th);return {q:`Les ${k} derniers Sprints ont terminé <b>${th.join(', ')}</b> éléments. Il reste <b>${rest}</b> éléments pour atteindre le Product Goal. Combien de Sprints faut-il prévoir au rythme moyen ? (arrondi supérieur)`,a:sp,tol:0,u:'Sprints',s:`Débit moyen = (${th.join(' + ')}) ÷ ${k} = ${nf(avg)} éléments par Sprint.<br>Sprints = arrondi sup. de ${rest} ÷ ${nf(avg)} = <b>${sp}</b>.<br>Fourchette honnête : ${Math.ceil(rest/mx)} Sprints au meilleur débit (${mx}) à ${Math.ceil(rest/mn)} au plus faible (${mn}). Seul ce qui s'est déjà passé sert à la prévision ; on la révise à chaque Sprint.`}}},
+ little:{n:"Loi de Little (flux)",g(){const t=[1,1.5,2,2.5,3,4][R(0,5)],w=R(4,18),c=w/t;return {q:`Le travail en cours (WIP) est de <b>${w}</b> éléments et le débit moyen de <b>${nf(t)}</b> éléments par jour. Quel est le temps de cycle moyen en jours ? (une décimale)`,a:Math.round(c*10)/10,tol:.05,u:'jours',s:`Loi de Little : temps de cycle = WIP ÷ débit = ${w} ÷ ${nf(t)} = <b>${nf(c,1)} jours</b>.<br>Réduire le WIP raccourcit le temps de cycle. Métriques décrites dans le Kanban Guide for Scrum Teams (pratique complémentaire).`}}},
+ daily:{n:"Timebox du Daily Scrum",g(){const j=[5,10,15,20][R(0,3)];return {q:`Un Sprint compte <b>${j}</b> jours ouvrés. Quel est le temps maximal cumulé consacré au Daily Scrum sur tout le Sprint, en minutes ?`,a:j*15,tol:0,u:'min',s:`Daily Scrum = 15 min par jour ouvré, quelle que soit la taille de l'équipe.<br>Total = ${j} × 15 = <b>${j*15} min</b>, soit ${nf(j*15/60)} h.`}}},
+ capacite:{n:"Capacité du Sprint",g(){const d=R(3,8),j=[5,10,15][R(0,2)],a=R(0,Math.floor(d*j/4)),c=d*j-a;return {q:`<b>${d}</b> Developers, un Sprint de <b>${j}</b> jours ouvrés et <b>${a}</b> jours-personne d'absence prévus (congés, formation). Quelle est la capacité en jours-personne ?`,a:c,tol:0,u:'jours-personne',s:`Capacité = Developers × jours − absences = ${d} × ${j} − ${a} = <b>${c} jours-personne</b>.<br>Au Sprint Planning, les Developers sélectionnent le volume en tenant compte de leur capacité, de leur performance passée et de la DoD.`}}}
+};
+let fx=null,ftype=store.get('psm:ftype','all');
+function newFx(){const keys=ftype==='all'?Object.keys(FORM):[ftype];const k=keys[R(0,keys.length-1)];fx={k,...FORM[k].g(),done:false,val:''}}
+function viewFormules(){
+ if(!fx)newFx();
+ const st=store.get('psm:formstat',{});const tot=Object.values(st).reduce((x,y)=>({n:x.n+y.n,c:x.c+y.c}),{n:0,c:0});
+ app.innerHTML=`<div class="eyebrow">Nouvel onglet · exercices chiffrés générés à l'infini</div><h1>Atelier formules</h1>
+ <p class="lede">Calculs utiles au PSM I et à la pratique de Scrum : score et seuil d'examen, gestion des 60 minutes, canaux de communication, prévision empirique, loi de Little, timebox et capacité. Correction détaillée après chaque réponse.</p>
+ <div class="chips" style="display:flex;flex-wrap:wrap;gap:6px;margin:16px 0"><button class="chip" data-t="all" aria-pressed="${ftype==='all'}">Tous</button>${Object.keys(FORM).map(k=>`<button class="chip" data-t="${k}" aria-pressed="${ftype===k}">${FORM[k].n}</button>`).join('')}</div>
+ <div class="panel"><div class="qhead"><span>${FORM[fx.k].n}</span><span>Réussite cumulée : ${tot.c}/${tot.n}</span></div>
+ <p class="qtext" style="margin-top:10px">${fx.q}</p>
+ <div class="row"><input id="fxin" type="text" inputmode="decimal" autocomplete="off" value="${esc(fx.val)}" ${fx.done?'disabled':''} aria-label="Votre réponse" style="font:600 18px var(--f-mono);padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);width:180px;max-width:100%"><span style="color:var(--muted)">${esc(fx.u)}</span>
+ ${fx.done?'':'<button class="btn primary" id="fxok">Vérifier</button><button class="btn" id="fxshow">Voir la solution</button>'}</div>
+ ${fx.done?`<div class="feedback"><div class="verdict ${fx.ok?'ok':'ko'}">${fx.ok?'Juste.':`Pas tout à fait. Réponse attendue : ${nf(fx.a,1)} ${esc(fx.u)}.`}</div><div>${fx.s}</div></div>
+ <div class="qnav"><span></span><button class="btn primary" id="fxnext">Nouvel exercice</button></div>`:''}</div>`;
+ app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{ftype=b.dataset.t;store.set('psm:ftype',ftype);newFx();viewFormules()});
+ const inp=$('#fxin');if(inp&&!fx.done){inp.oninput=e=>{fx.val=e.target.value};inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();check()}}}
+ const check=give=>{const v=parseFloat(String(fx.val).replace(/\s/g,'').replace(',','.'));fx.ok=!give&&!isNaN(v)&&Math.abs(v-fx.a)<=fx.tol+1e-9;fx.done=true;const s=store.get('psm:formstat',{});s[fx.k]=s[fx.k]||{n:0,c:0};s[fx.k].n++;if(fx.ok)s[fx.k].c++;store.set('psm:formstat',s);bumpDay(1);logSession('Atelier formules · '+FORM[fx.k].n,fx.ok?1:0,1);viewFormules()};
+ const o=$('#fxok');if(o){o.onclick=()=>check(false);$('#fxshow').onclick=()=>check(true)}
+ const n=$('#fxnext');if(n){n.onclick=()=>{newFx();viewFormules();const i=$('#fxin');if(i)i.focus()};n.focus()}
+}
+
+/* ---------- Associations éclair ---------- */
+let asc=null;
+function viewAssoc(){
+ if(asc&&!asc.done)return renderAssoc();
+ const b=store.get('psm:assocbest',null);
+ app.innerHTML=`<div class="eyebrow">Nouvel onglet · vocabulaire de l'examen</div><h1>Associations éclair</h1>
+ <p class="lede">Reliez 6 termes anglais du glossaire à leur traduction, le plus vite possible. Cliquez un terme, puis sa traduction. Chaque erreur ajoute 5 secondes de pénalité.</p>
+ <div class="panel flash" style="margin-top:20px"><div class="eyebrow">${b==null?'Pas encore de record':'Record : '+nf(b,1)+' s'}</div>
+ <div class="stmt">6 paires, un chrono, un record à battre.</div><div class="row"><button class="btn primary" id="ago">Commencer</button></div></div>
+ ${asc&&asc.done?`<div class="panel" style="margin-top:16px"><h3>Dernière manche : ${nf(asc.final,1)} s (${nf(asc.time,1)} s + ${asc.err} erreur(s) × 5 s)${asc.rec?' · nouveau record':''}</h3>
+ <ul class="clean" style="margin-top:10px">${asc.items.map(g=>`<li><b>${esc(g[0])}</b> → ${esc(g[1])} · <span style="color:var(--muted)">${esc(g[2])}</span></li>`).join('')}</ul></div>`:''}`;
+ $('#ago').onclick=()=>{const pool=GLOSS.filter(g=>g[0].toLowerCase()!==g[1].toLowerCase());const seen=new Set(),items=[];shuffle(pool).forEach(g=>{if(items.length<6&&!seen.has(g[1])){seen.add(g[1]);items.push(g)}});
+  asc={items,right:shuffle(items.map((_,i)=>i)),matched:[],selL:null,err:0,t0:Date.now(),done:false,bad:null};renderAssoc();clearInterval(asc.tid);asc.tid=setInterval(()=>{if(!asc||asc.done||current!=='assoc'){if(asc)clearInterval(asc.tid);return}const c=$('#achrono');if(c)c.textContent=nf((Date.now()-asc.t0)/1000,1)+' s'},100)};
+}
+function renderAssoc(){
+ const a=asc;
+ app.innerHTML=`<div class="qhead"><span>Associations éclair</span><span>${a.matched.length}/6 · ${a.err} erreur(s)</span></div>
+ <div class="progress"><i style="width:${a.matched.length/6*100}%"></i></div>
+ <div class="panel"><div class="row" style="justify-content:space-between"><span class="clock" id="achrono">0,0 s</span><button class="btn sm" id="aquit">Abandonner</button></div>
+ <div class="assoc"><div class="acol">${a.items.map((g,i)=>`<button class="opt ${a.matched.includes(i)?'right':a.selL===i?'sel':''}" data-l="${i}" ${a.matched.includes(i)?'disabled':''}><span lang="en">${esc(g[0])}</span></button>`).join('')}</div>
+ <div class="acol">${a.right.map(i=>`<button class="opt ${a.matched.includes(i)?'right':a.bad===i?'wrong':''}" data-r="${i}" ${a.matched.includes(i)?'disabled':''}><span>${esc(a.items[i][1])}</span></button>`).join('')}</div></div></div>`;
+ app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{a.selL=+b.dataset.l;a.bad=null;renderAssoc()});
+ app.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{if(a.selL==null)return;const r=+b.dataset.r;if(r===a.selL){a.matched.push(r);a.selL=null;a.bad=null;bumpDay(1);if(a.matched.length===6)return endAssoc()}else{a.err++;a.bad=r}renderAssoc()});
+ $('#aquit').onclick=()=>{clearInterval(a.tid);asc=null;viewAssoc()};
+ const c=$('#achrono');if(c)c.textContent=nf((Date.now()-a.t0)/1000,1)+' s';
+}
+function endAssoc(){const a=asc;clearInterval(a.tid);a.done=true;a.time=(Date.now()-a.t0)/1000;a.final=a.time+5*a.err;const b=store.get('psm:assocbest',null);a.rec=b==null||a.final<b;if(a.rec)store.set('psm:assocbest',Math.round(a.final*10)/10);logSession('Associations éclair',Math.round(a.final*10)/10,'s');viewAssoc()}
+
+/* ---------- Études de cas ---------- */
+const CAS=[
+{t:"Le comité qui voulait être Product Owner",lieu:"Abidjan, Côte d'Ivoire",org:"Banque Lagune, application de mobile money",a:[1,3],ctx:"La banque lance une nouvelle application de paiement mobile. Trois directeurs (commercial, risques, informatique) veulent piloter ensemble le produit. L'équipe compte déjà 14 personnes, dont un « lead developer » qui distribue les tâches.",
+d:[["Qui doit être le Product Owner de l'application ?",["Une seule personne, accountable de la valeur, qui représente les trois directions dans le Product Backlog","Le comité des trois directeurs, qui vote chaque priorité","Le lead developer, qui connaît le mieux le produit","Le Scrum Master, en attendant un accord des directeurs"],"Le Product Owner est une personne, pas un comité. Les directeurs influencent le Product Backlog en convainquant le PO."],
+["Que faire de l'équipe de 14 personnes ?",["La réorganiser en plusieurs Scrum Teams cohérentes partageant le même Product Goal, Product Backlog et Product Owner","La garder telle quelle : Scrum ne fixe pas de limite","Créer une sous-équipe front-end et une sous-équipe back-end sous un chef commun","Retirer quatre personnes du projet"],"Une Scrum Team compte typiquement 10 personnes ou moins ; au-delà, on crée plusieurs Scrum Teams sur le même produit."],
+["Le lead developer continue d'assigner les tâches. Que fait le Scrum Master ?",["Il coache l'équipe vers l'autogestion et aide le lead à mettre son expertise au service des décisions collectives","Il le laisse faire, c'est efficace","Il demande aux RH de le sanctionner","Il assigne lui-même les tâches pour rester neutre"],"Il n'y a ni hiérarchie ni sous-équipe dans une Scrum Team ; les Developers décident ensemble qui fait quoi."]]},
+{t:"Le Daily Scrum de 45 minutes",lieu:"Dakar, Sénégal",org:"TéléSahel, opérateur télécom",a:[2,10],ctx:"Le Daily Scrum de l'équipe « facturation » dure 45 minutes : chaque Developer rend compte au responsable du service. La direction propose des Sprints de 6 semaines pour « avoir le temps de livrer », et la Sprint Review sert de comité de validation avant mise en production.",
+d:[["Comment faire évoluer le Daily Scrum ?",["Le recentrer sur la progression vers le Sprint Goal, en 15 minutes, entre Developers, les discussions détaillées ayant lieu après","Le garder à 45 minutes puisque tout le monde est informé","Le tenir une fois par semaine pour gagner du temps","Confier l'animation obligatoire au Scrum Master"],"Le Daily Scrum dure 15 minutes et appartient aux Developers ; ce n'est pas un reporting au management."],
+["Que répondre à la proposition de Sprints de 6 semaines ?",["Les Sprints durent un mois ou moins ; des Sprints plus courts réduisent le risque et accélèrent les retours","Accepter : la durée est libre","Accepter seulement pour le premier Sprint","Passer à des Sprints de 3 mois avec une phase de test"],"Un Sprint dure un mois ou moins. Plus il est long, plus le Sprint Goal risque de devenir invalide."],
+["Comment repositionner la Sprint Review ?",["En faire une session de travail avec les parties prenantes et permettre la livraison dès qu'un Increment est Done","La conserver comme porte d'approbation obligatoire","La supprimer au profit d'un e-mail","La transformer en revue de performance de l'équipe"],"La Sprint Review ne doit jamais être une gate de livraison ; un Increment Done peut être livré avant la fin du Sprint."]]},
+{t:"Presque terminé à la fin du Sprint",lieu:"Lomé, Togo",org:"Plateforme logistique portuaire",a:[5,9],ctx:"À la fin du Sprint, trois fonctionnalités de suivi des conteneurs sont « codées mais pas testées ». Le directeur du port veut les voir à la Sprint Review et propose d'alléger la Definition of Done pour le Sprint suivant afin de tenir une échéance douanière.",
+d:[["Que faire des trois fonctionnalités non testées ?",["Elles ne sont ni présentées ni livrées ; elles retournent au Product Backlog","Les présenter comme terminées à 90 %","Prolonger le Sprint de trois jours","Les livrer avec une liste de bugs connus"],"Un élément qui ne répond pas à la DoD ne peut pas être présenté à la Sprint Review."],
+["Le directeur veut alléger la Definition of Done. Quelle est la réponse ?",["La qualité ne diminue pas ; on renégocie plutôt le périmètre avec le Product Owner","Accepter pour ce seul Sprint","Laisser chaque Developer choisir ses critères","Supprimer les tests automatisés pour aller plus vite"],"Pendant le Sprint, la qualité ne diminue pas. Le levier est le périmètre, pas la DoD."],
+["Une deuxième équipe rejoint le produit. Que devient la DoD ?",["Les deux équipes définissent ensemble une DoD commune et la respectent","Chaque équipe garde la sienne","La nouvelle équipe adopte une DoD allégée le temps de monter en compétence","Le Product Owner écrit une DoD par équipe"],"Plusieurs Scrum Teams sur un même produit partagent une même Definition of Done."]]},
+{t:"Le directeur général et le Sprint Backlog",lieu:"Bamako, Mali",org:"Institution de microfinance",a:[12,13],ctx:"Le directeur général ajoute directement des éléments dans le Sprint Backlog en cours. Le Product Backlog compte 400 éléments jamais revus. Le conseil d'administration mesure la réussite au nombre de fonctionnalités livrées.",
+d:[["Comment traiter les ajouts du directeur général ?",["Le Scrum Master l'aide à passer par le Product Owner, qui décide de l'ordre dans le Product Backlog","Les Developers les intègrent, c'est le DG","Le Scrum Master supprime les ajouts sans explication","Le Sprint est annulé automatiquement"],"Le Sprint Backlog appartient aux Developers ; toute demande passe par le Product Owner."],
+["Que faire des 400 éléments jamais revus ?",["Le PO, avec les Developers, raffine et ordonne le haut du backlog et retire les éléments devenus inutiles","Les estimer tous en story points avant de continuer","Les garder intacts : on ne supprime rien","Laisser le Scrum Master les trier"],"Le Product Backlog est une liste émergente et ordonnée ; sa gestion efficace est l'accountability du PO."],
+["Comment faire évoluer la mesure de la réussite ?",["Mesurer les résultats pour les clients (usage, satisfaction, délai de mise sur le marché) plutôt que le nombre de fonctionnalités","Mesurer la vélocité de l'équipe","Compter les lignes de code","Garder le nombre de fonctionnalités, plus simple à suivre"],"La valeur se mesure aux résultats (outcomes), par exemple avec les Key Value Areas de l'Evidence-Based Management."]]},
+{t:"Une date ferme pour le guichet numérique",lieu:"Cotonou, Bénin",org:"Agence de services publics numériques",a:[4,6],ctx:"Le ministère exige une date ferme pour la mise en ligne de tout le guichet numérique. Aucun usager n'assiste aux Sprint Reviews, et un conseiller technique du ministère contacte directement les Developers pour ajouter des écrans.",
+d:[["Comment répondre à l'exigence de date ferme ?",["Le PO partage une prévision fondée sur le débit réel des Sprints, présentée en fourchette et révisée à chaque Review","S'engager sur la date et tout le périmètre","Ajouter dix Developers pour sécuriser la date","Planifier tous les Sprints dans le détail dès maintenant"],"Dans un environnement complexe, seul ce qui s'est déjà passé sert aux décisions tournées vers l'avenir."],
+["Comment améliorer les Sprint Reviews ?",["Inviter des usagers et des agents de guichet pour inspecter l'Increment et adapter le Product Backlog","Garder une démonstration interne entre Developers","Remplacer la Review par un rapport écrit au ministère","Organiser la Review seulement à la fin du projet"],"La Review est le lieu de collaboration avec les parties prenantes clés."],
+["Le conseiller contacte directement les Developers. Que faire ?",["Les Developers le redirigent vers le Product Owner, et le Scrum Master facilite cette collaboration","Les Developers ajoutent les écrans en urgence","Le Scrum Master lui interdit tout contact avec l'équipe","Le conseiller devient co-Product Owner"],"Pour changer le Product Backlog, il faut convaincre le Product Owner ; le SM rapproche parties prenantes et équipe."]]},
+{t:"L'équipe qui attend les ordres",lieu:"Ouagadougou, Burkina Faso",org:"Startup agritech (conseils météo par SMS)",a:[3,7],ctx:"Nouvellement formée, l'équipe attend que le Scrum Master lui dise quoi faire. Le manager demande un rapport individuel hebdomadaire. Depuis trois Sprints, le Sprint Goal n'est pas atteint.",
+d:[["Quelle posture pour le Scrum Master face à une équipe qui attend des ordres ?",["Coacher l'équipe vers l'autogestion en la laissant prendre et assumer ses décisions","Distribuer les tâches pendant quelques Sprints","Nommer un chef d'équipe temporaire","Demander au manager de reprendre la main"],"Le SM coache les membres en matière d'autogestion et de cross-fonctionnalité."],
+["Le manager veut un rapport individuel hebdomadaire. Que faire ?",["Lui expliquer la transparence apportée par les artefacts et l'inviter à la Sprint Review","Produire le rapport chaque semaine","Demander à chaque Developer un e-mail quotidien","Refuser sans explication"],"Scrum apporte la transparence par ses artefacts et événements ; le SM aide l'organisation à comprendre l'empirisme."],
+["Le Sprint Goal est manqué depuis trois Sprints. Premier réflexe ?",["Aider l'équipe à en inspecter les causes en Retrospective, avec des questions ouvertes","Réduire d'office la durée des Sprints","Signaler l'équipe à la direction","Demander au PO des objectifs plus faciles"],"Le coaching fait émerger les causes et les solutions de l'équipe elle-même."]]},
+{t:"La dette technique cachée",lieu:"Conakry, Guinée",org:"Clinique, dossier patient informatisé",a:[8,11],ctx:"Pour tenir les délais, des Developers ont caché au Product Owner une dette technique importante. Un Developer n'ose pas dire au directeur médical qu'une fonctionnalité demandée mettrait en danger la qualité des données. L'équipe ne s'ajuste qu'en Retrospective.",
+d:[["Quel pilier est d'abord compromis par la dette cachée ?",["La transparence","L'inspection","L'adaptation","Le focus"],"Sans transparence, inspections et adaptations reposent sur une image fausse."],
+["Le Developer hésite à alerter le directeur médical. Quelle valeur le Scrum Master encourage-t-il ?",["Le courage : faire ce qui est juste et traiter les problèmes difficiles","Le focus","L'engagement à livrer tout le périmètre","Le respect de la hiérarchie"],"Les membres de la Scrum Team ont le courage de faire ce qui est juste et de travailler sur des problèmes difficiles."],
+["L'équipe ne s'adapte qu'en Retrospective. Que rappeler ?",["On s'adapte dès que possible lorsqu'un écart dépasse les limites acceptables","C'est la règle : l'adaptation se fait seulement en Retrospective","On attend la fin de la release","On attend l'accord du management"],"Les événements formalisent l'adaptation, ils ne l'interdisent pas entre eux."]]},
+{t:"La Retrospective monopolisée",lieu:"Niamey, Niger",org:"Compagnie d'assurance, souscription en ligne",a:[10,2],ctx:"Un Developer expérimenté monopolise chaque Retrospective. Le dernier Sprint Planning a dépassé sa timebox de trois heures. Le Product Owner demande de l'aide pour animer un atelier avec les agences régionales.",
+d:[["Comment équilibrer la parole en Retrospective ?",["Utiliser des formats inclusifs : écriture silencieuse, tours de table, 1-2-4-All","Exclure le Developer de la Retrospective","Annuler les Retrospectives","Laisser faire pour éviter un conflit"],"Le SM veille à ce que les événements soient positifs et productifs ; la facilitation inclut toutes les voix."],
+["Le Sprint Planning dépasse sa timebox. Que faire ?",["Respecter la timebox : le Sprint démarre avec un Sprint Goal, le plan se précise au fil du Sprint","Prolonger jusqu'à ce que tout soit planifié","Décaler le début du Sprint","Laisser le Scrum Master finir le plan seul"],"Une timebox est une durée maximale ; le Sprint Backlog évolue pendant le Sprint."],
+["Le PO demande de l'aide pour l'atelier avec les agences. Que fait le Scrum Master ?",["Il facilite la collaboration avec les parties prenantes, comme demandé ou nécessaire","Il refuse : ce n'est pas son rôle","Il remplace le PO","Il demande au manager d'animer"],"Faciliter la collaboration avec les parties prenantes est un service du SM au Product Owner."]]}
+];
+let cas=null;
+function viewCas(){
+ if(cas&&!cas.done)return renderCas();
+ const res=store.get('psm:cas',{});
+ app.innerHTML=`<div class="eyebrow">Nouvel onglet · mises en situation</div><h1>Études de cas</h1>
+ <p class="lede">${CAS.length} scénarios terrain situés en Afrique de l'Ouest, chacun en 3 décisions. Choisissez la meilleure réponse conforme au Scrum Guide ; la justification s'affiche après chaque décision.</p>
+ <div class="dgrid" style="margin-top:20px">${CAS.map((c,i)=>`<article class="dcard"><div class="num"><span>CAS ${i+1} · ${esc(c.lieu)}</span><span>${res[i]==null?'—':res[i]+'/3'}</span></div><h3>${esc(c.t)}</h3>
+ <p style="margin:0;font-size:14px;color:var(--muted)">${esc(c.org)} · thèmes ${c.a.join(', ')}</p><div class="row"><button class="btn primary sm" data-c="${i}">${res[i]==null?'Commencer':'Rejouer'}</button></div></article>`).join('')}</div>`;
+ app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const i=+b.dataset.c;cas={i,step:0,score:0,ans:null,done:false,opts:CAS[i].d.map(d=>shuffle(d[1].map((t,k)=>({t,ok:k===0}))))};renderCas()});
+}
+function renderCas(){
+ const c=CAS[cas.i],d=c.d[cas.step],o=cas.opts[cas.step],a=cas.ans;
+ app.innerHTML=`<div class="qhead"><span>Cas ${cas.i+1} · ${esc(c.lieu)} · ${esc(c.org)}</span><span>Décision ${cas.step+1}/3 · ${cas.score} juste(s)</span></div>
+ <div class="progress"><i style="width:${(cas.step+(a!=null?1:0))/3*100}%"></i></div>
+ <div class="panel"><h2>${esc(c.t)}</h2><p class="lede" style="margin-bottom:16px">${esc(c.ctx)}</p>
+ <p class="qtext">${esc(d[0])}</p>
+ <div class="opts">${o.map((x,k)=>`<button class="opt ${a!=null?(x.ok?'right':a===k?'wrong':''):''}" data-k="${k}" ${a!=null?'disabled':''}><span class="k">${'ABCD'[k]}</span><span>${esc(x.t)}</span></button>`).join('')}</div>
+ ${a!=null?`<div class="feedback"><div class="verdict ${o[a].ok?'ok':'ko'}">${o[a].ok?'Bonne décision.':'Ce n\'est pas la meilleure décision.'}</div><div>${esc(d[2])}</div></div>`:''}
+ <div class="qnav"><button class="btn" id="cquit">Retour aux cas</button>${a!=null?`<button class="btn primary" id="cnext">${cas.step<2?'Décision suivante':'Terminer le cas'}</button>`:''}</div></div>`;
+ app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{cas.ans=+b.dataset.k;if(o[cas.ans].ok)cas.score++;bumpDay(1);renderCas()});
+ $('#cquit').onclick=()=>{cas=null;viewCas()};
+ const n=$('#cnext');if(n)n.onclick=()=>{if(cas.step<2){cas.step++;cas.ans=null;renderCas();window.scrollTo(0,0)}else{const r=store.get('psm:cas',{});r[cas.i]=cas.score;store.set('psm:cas',r);logSession('Étude de cas '+(cas.i+1),cas.score,3);cas.done=true;cas=null;viewCas()}};
+}
+
+/* ---------- Progression et objectifs ---------- */
+function streak(goal){const d=store.get('psm:days',{});let n=0;const dt=new Date();const key=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');if((d[key(dt)]||0)<goal)dt.setDate(dt.getDate()-1);while((d[key(dt)]||0)>=goal){n++;dt.setDate(dt.getDate()-1)}return n}
+function viewProgres(){
+ const goal=store.get('psm:goal',20),d=store.get('psm:days',{}),t=d[today()]||0,s=streak(goal),hist=store.get('psm:sessions',[]);
+ const cells=[];const end=new Date();const dow=(end.getDay()+6)%7;const startD=new Date(end);startD.setDate(end.getDate()-dow-28);
+ for(let i=0;i<35;i++){const x=new Date(startD);x.setDate(startD.getDate()+i);const k=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');const v=d[k]||0,fut=x>end;cells.push(`<div class="hc ${fut?'fut':v===0?'l0':v<goal/2?'l1':v<goal?'l2':'l3'}" title="${x.toLocaleDateString('fr-FR')} : ${v} activité(s)"><span class="sr">${x.toLocaleDateString('fr-FR')} : ${v}</span></div>`)}
+ const active=Object.keys(d).filter(k=>d[k]>0).length;
+ app.innerHTML=`<div class="eyebrow">Nouvel onglet · motivation et suivi</div><h1>Progression et objectifs</h1>
+ <p class="lede">Fixez un objectif quotidien. Chaque question, exercice, étape ordonnée, association ou décision de cas compte comme une activité.</p>
+ <div class="stats" style="margin-top:20px;grid-template-columns:repeat(4,minmax(0,1fr))">
+  <div class="stat"><b>${t}/${goal}</b><span>aujourd'hui</span></div>
+  <div class="stat"><b>${s}</b><span>jour(s) de suite objectif atteint</span></div>
+  <div class="stat"><b>${active}</b><span>jours actifs au total</span></div>
+  <div class="stat"><b>${hist.length}</b><span>séances enregistrées</span></div>
+ </div>
+ <div class="twocol" style="margin-top:16px">
+ <section class="panel"><h3>Objectif quotidien</h3>
+  <div class="mbar" style="margin:14px 0 6px;height:14px"><i class="${t>=goal?'':'mid'}" style="width:${Math.min(100,t/goal*100)}%"></i></div>
+  <p style="margin:0 0 12px;font-size:14px;color:var(--muted)">${t>=goal?'Objectif du jour atteint.':`Encore ${goal-t} activité(s) pour atteindre l'objectif du jour.`}</p>
+  <div class="row">${[10,20,40,80].map(g=>`<button class="chip" data-g="${g}" aria-pressed="${goal===g}">${g} par jour</button>`).join('')}</div></section>
+ <section class="panel"><h3>Activité des 5 dernières semaines</h3>
+  <div class="heat-h">${['L','M','M','J','V','S','D'].map(x=>`<span>${x}</span>`).join('')}</div>
+  <div class="heat">${cells.join('')}</div>
+  <div class="row" style="font-size:12.5px;color:var(--muted);margin-top:8px;gap:6px">Moins <span class="hc l0 sw"></span><span class="hc l1 sw"></span><span class="hc l2 sw"></span><span class="hc l3 sw"></span> Objectif atteint</div></section>
+ </div>
+ <section class="panel" style="margin-top:16px"><h3>Historique des séances</h3>
+ ${hist.length?`<div class="tablewrap"><table class="atable"><tr><th>Date</th><th>Heure</th><th>Module</th><th style="text-align:right">Résultat</th></tr>${hist.slice(-25).reverse().map(h=>`<tr><td>${esc(h.d)}</td><td>${esc(h.h)}</td><td>${esc(h.m)}</td><td class="n">${h.t==='s'?nf(h.s,1)+' s':h.s+'/'+h.t}</td></tr>`).join('')}</table></div>`:'<p class="empty">Aucune séance pour l\'instant. Terminez un quiz, un examen blanc ou un atelier pour la voir ici.</p>'}</section>
+ <section class="panel" style="margin-top:16px"><h3>Code de sauvegarde</h3>
+ <p style="margin:6px 0 10px;font-size:14.5px;color:var(--muted)">Copiez ce code sur l'appareil d'origine, puis collez-le sur le nouvel appareil et cliquez sur Restaurer. Il contient scores, carnet d'erreurs, historique, records, plan et objectifs.</p>
+ <div class="row"><button class="btn primary" id="bkgen">Générer mon code</button><button class="btn" id="bkcopy" hidden>Copier le code</button><span id="bkmsg" style="font-size:13.5px;color:var(--muted)"></span></div>
+ <textarea id="bkout" readonly hidden aria-label="Code de sauvegarde" class="code"></textarea>
+ <label for="bkin" style="display:block;font-weight:700;margin:16px 0 6px">Restaurer depuis un code</label>
+ <textarea id="bkin" class="code" placeholder="Collez ici un code qui commence par PSM1-"></textarea>
+ <div class="row" style="margin-top:8px"><button class="btn" id="bkrest">Restaurer</button><span id="bkrmsg" style="font-size:13.5px"></span></div></section>`;
+ app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{store.set('psm:goal',+b.dataset.g);viewProgres()});
+ $('#bkgen').onclick=()=>{const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('psm:'))o[k]=localStorage.getItem(k)}}catch(e){}
+  const code='PSM1-'+btoa(unescape(encodeURIComponent(JSON.stringify(o))));const out=$('#bkout');out.value=code;out.hidden=false;$('#bkcopy').hidden=false;$('#bkmsg').textContent=Object.keys(o).length+' éléments sauvegardés · '+code.length+' caractères';out.select()};
+ $('#bkcopy').onclick=()=>{const out=$('#bkout');const ok=()=>{$('#bkmsg').textContent='Code copié.'};const fb=()=>{out.focus();out.select();$('#bkmsg').textContent='Code sélectionné : copiez-le avec Ctrl+C ou un appui long.'};try{navigator.clipboard.writeText(out.value).then(ok,fb)}catch(e){fb()}};
+ $('#bkrest').onclick=function(){const m=$('#bkrmsg');const raw=$('#bkin').value.trim();if(!raw.startsWith('PSM1-')){m.style.color='var(--bad)';m.textContent='Code invalide : il doit commencer par PSM1-.';return}
+  let o;try{o=JSON.parse(decodeURIComponent(escape(atob(raw.slice(5)))))}catch(e){m.style.color='var(--bad)';m.textContent='Code illisible : vérifiez qu\'il a été copié en entier.';return}
+  if(!this.dataset.c){this.dataset.c='1';this.textContent='Confirmer : remplacer la progression de cet appareil';m.style.color='var(--warn)';m.textContent=Object.keys(o).length+' éléments trouvés.';return}
+  try{Object.keys(localStorage).filter(k=>k.startsWith('psm:')).forEach(k=>localStorage.removeItem(k));Object.keys(o).forEach(k=>{if(k.startsWith('psm:'))localStorage.setItem(k,o[k])})}catch(e){m.style.color='var(--bad)';m.textContent='Restauration impossible : le stockage du navigateur est bloqué.';return}
+  viewProgres();const mm=$('#bkrmsg');mm.style.color='var(--ok)';mm.textContent='Progression restaurée.'};
+}
+Object.assign(views,{ordre:viewOrdre,formules:viewFormules,assoc:viewAssoc,cas:viewCas,progres:viewProgres});
 
 const start=(location.hash||'').replace('#','');
 go(views[start]?start:'accueil');
