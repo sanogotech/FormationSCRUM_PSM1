@@ -33,8 +33,81 @@ Les tarifs, les fonctionnalités gratuites et les offres payantes peuvent évolu
 L'examen PSM I officiel comporte 80 questions en 60 minutes, avec un seuil de réussite de 85 %. Les simulateurs servent à s'entraîner ; ils ne remplacent pas l'examen de certification.
 
 ---------
+## Vidéo à intégrer dans le parcours de préparation PSM I
 
-Voici une version Markdown détaillée, prête à copier dans un fichier `parcours-preparation-psm1.md`, avec des conseils pratiques, des exemples et des critères pour savoir quand passer à l'étape suivante.
+[Fast Learner, AI-Enabled Learning Platform Transforming Education](https://images.openai.com/static-rsc-4/LJi5KOLAYs1lNu1qQIHiLQ9G9cRIIGH6y2Mtxu4R5DZM-9Tn6H8TjA_hnftByeXDSVmQqP6JwbIF_BiYZjCJqTr5V7NQdJV6-PWZK5oURWIASRFWhi3O-NfMo8XA1_RwTCnMDr7bUp7ruO2MkZNy2eWgeFdz-8hEueqepq1EiR8?purpose=inline)
+
+2025 PSM I Practice Questions by ScrumPrep
+
+Chaîne : ScrumPrep · Environ 22 minutes
+
+[Regarder la vidéo sur YouTube](https://youtu.be/pAQeEu-l8ZM?si=tdrdLLh568HQn-TJ\&utm_source=chatgpt.com)
+
+Cette vidéo constitue une ressource complémentaire intéressante pour la préparation au PSM I. Elle présente une série de questions d'entraînement et permet de se familiariser avec le style des questions, le vocabulaire anglais et les situations de mise en pratique de Scrum.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.api.motion.ac.in\&sz=32)
+
+2020 -
+
++1
+
+
+
+## Ce que la vidéo permet de travailler
+
+L'indexation disponible présente des repères allant de la question 1 à la question 80 sur une vidéo d'environ 22 minutes. Elle semble donc conçue comme une révision rapide de nombreuses questions, plutôt que comme un cours détaillé.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.api.motion.ac.in\&sz=32)
+
+api.motion.ac.in
+
+
+
+Les principaux thèmes à surveiller pendant le visionnage sont :
+
+- Accountabilities : rôles et responsabilités du Scrum Master, du Product Owner et des Developers.
+- Events : objectifs et fonctionnement des cinq événements Scrum.
+- Artifacts & Commitments : Product Backlog, Sprint Backlog, Increment et engagements associés.
+- Empiricism : Transparency, Inspection et Adaptation.
+- Self-managing teams : autonomie et organisation du travail.
+- Product Value : valeur, priorisation et objectifs du produit.
+
+Ces thèmes correspondent aux domaines de préparation présentés par ScrumPrep.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://scrumprep.com\&sz=32)
+
+ScrumPrep
+
+
+
+## Comment exploiter efficacement cette vidéo
+
+1\. Premier visionnage : diagnostic
+
+Répondez mentalement avant de découvrir la réponse. Notez les questions auxquelles vous hésitez, sans interrompre constamment la vidéo.
+
+2\. Deuxième visionnage : apprentissage
+
+Mettez en pause sur les questions difficiles. Expliquez pourquoi la réponse correcte convient et pourquoi les distracteurs sont incorrects.
+
+3\. Vérification : Scrum Guide
+
+Pour chaque erreur, retrouvez la règle correspondante dans le guide officiel : [https://scrumguides.org/download.html](https://scrumguides.org/download.html?utm_source=chatgpt.com)
+
+4\. Révision différée
+
+Le lendemain, refaites les questions sans regarder la vidéo. Si vous connaissez encore la réponse et sa justification, le concept est mieux assimilé.
+
+## Mon avis
+
+Je recommande d'intégrer cette vidéo à l'étape 3 — S'entraîner, après une première lecture du Scrum Guide et quelques résultats à Scrum Open.
+
+Attention : cette vidéo est une ressource de préparation tierce, pas un examen officiel ni une garantie que les mêmes questions apparaîtront le jour de la certification. Le titre « 2025 » indique également qu'il faut vérifier les éventuelles évolutions du contenu avec le guide officiel actuel.
+
+Pour obtenir une analyse question par question avec les réponses, les explications et les références au Scrum Guide, il faudrait disposer du contenu intégral de la vidéo ou de sa transcription.
+
+
+----------
 
 # Guide de préparation à la certification PSM I — Scrum.org
 
